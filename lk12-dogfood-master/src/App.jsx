@@ -3,11 +3,10 @@ import {Routes, Route} from "react-router-dom";
 
 import Ctx from "./ctx"
 import Modal from "./components/Modal";
-import {Header, Footer} from "./components/General"; // index.jsx
+import {Header, Footer} from "./components/General";
 
 import Home from "./pages/Home";
 import Catalog from "./pages/Catalog";
-import OldPage from "./pages/Old";
 import Profile from "./pages/Profile";
 import Product from "./pages/Product";
 import AddProduct from "./pages/AddProduct";
