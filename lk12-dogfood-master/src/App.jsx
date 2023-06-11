@@ -2,20 +2,30 @@ import {useState, useEffect, createContext} from "react";
 import {Routes, Route} from "react-router-dom";
 
 import Ctx from "./ctx"
+import Api from "./Api"
 import Modal from "./components/Modal";
-import {Header, Footer} from "./components/General";
+import {Header, Footer} from "./components/General"; 
 
 import Home from "./pages/Home";
 import Catalog from "./pages/Catalog";
+import OldPage from "./pages/Old";
 import Profile from "./pages/Profile";
 import Product from "./pages/Product";
 import AddProduct from "./pages/AddProduct";
 import Favorites from "./pages/Favorites";
 
 const App = () => {
+    let basketStore = localStorage.getItem("basket12");
+    if (basketStore && basketStore[0] === "[") {
+        basketStore = JSON.parse(basketStore);
+    } else {
+        basketStore = [];
+    }
     const [user, setUser] = useState(localStorage.getItem("user12"));
     const [userId, setUserId] = useState(localStorage.getItem("user12-id"));
     const [token, setToken] = useState(localStorage.getItem("token12"));
+    const [api, setApi] = useState(new Api(token));
+    const [basket, setBasket] = useState(basketStore);
     const [baseData, setBaseData] = useState([]);
     const [goods, setGoods] = useState(baseData);
 
@@ -35,26 +45,30 @@ const App = () => {
     }, [user])
 
     useEffect(() => {
+        localStorage.setItem("basket12", JSON.stringify(basket));
+    }, [basket])
+
+    useEffect(() => {
+        setApi(new Api(token));
         console.log("token", token);
+    }, [token])
+
+    useEffect(() => {
         if (token) {
-            fetch("https://api.react-learning.ru/products", {
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                }
-            })
-                .then(res => res.json())
+            api.getProducts()
                 .then(data => {
                     console.log(data);
                     setBaseData(data.products);
                 })
+        } else {
+            setBaseData([]);
         }
-    }, [token])
+    }, [api])
 
     useEffect(() => {
     }, [baseData])
 
     return (
-
         <Ctx.Provider value={{
             searchResult,
             setSearchResult,
@@ -63,15 +77,18 @@ const App = () => {
             goods,
             setGoods,
             userId,
-            token
+            token,
+            api,
+            basket,
+            setBasket
         }}>
-            <Header
-                user={user}
-                upd={setUser}
-                searchArr={baseData}
-                setGoods={setGoods}
-                setModalOpen={setModalOpen}
-            />
+                <Header
+                    user={user}
+                    upd={setUser}
+                    searchArr={baseData}
+                    setGoods={setGoods}
+                    setModalOpen={setModalOpen}
+                />
             <main>
                 <Routes>
                     <Route path="/" element={<Home user={user} setActive={setModalOpen}/>}/>
@@ -81,7 +98,6 @@ const App = () => {
                             userId={userId}
                         />
                     }/>
-                   
                     <Route path="/profile" element={
                         <Profile user={user} setUser={setUser}/>}
                     />

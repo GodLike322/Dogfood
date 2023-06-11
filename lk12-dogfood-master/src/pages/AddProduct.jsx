@@ -7,12 +7,13 @@ const AddProduct = () => {
     const [link, setLink] = useState("https://beolin.club/uploads/posts/2022-07/1657851760_12-beolin-club-p-risunok-kostochki-karandashom-krasivo-19.png"); // pictures
     const [price, setPrice] = useState(999);
     const [cnt, setCnt] = useState(20); 
-    const [description, setDescription] = useState("Скоро здесь будет текст...");
+    const [description, setDescription] = useState("");
     const [discount, setDiscount] = useState(0);
     const [wight, setWight] = useState("0 г");
     const [tagWord, setTagWord] = useState("");
     const [tags, setTags] = useState(["df"]); 
-    
+    const [benefit, setBenefit] = useState("");
+
     const tagsHandler = (e) => {
         const val = e.target.value;
         const last = val[val.length - 1];
@@ -34,9 +35,10 @@ const AddProduct = () => {
         setCnt(20);
         setWight("0 г");
         setDiscount(0);
-        setDescription("Скоро здесь будет текст...");
+        setDescription("");
         setTagWord("");
         setTags(["df"]);
+        setBenefit("");
     }
     const delTag = (e) => {
         const val = e.target.innerText;
@@ -44,6 +46,7 @@ const AddProduct = () => {
     }
     const formHandler = (e) => {
         e.preventDefault();
+        console.log("Form submitted!");
         const body = {
             name: name,
             price: price,
@@ -65,12 +68,12 @@ const AddProduct = () => {
         })
             .then(res => res.json())
             .then(data => {
-                console.log(data);
+                console.log(data); 
                 if (!data.err && !data.error) {
-                    clearForm();
-                    navigate(`/product/${data._id}`)
+                  clearForm();
+                  navigate(`/product/${data._id}`);
                 }
-            })
+              })
     }
     return <Container style={{gridTemplateColumns: "auto"}}>
         <Row>
@@ -159,6 +162,19 @@ const AddProduct = () => {
                                 as="textarea"
                                 rows={4}
                                 onChange={e => {setDescription(e.target.value)}}
+                            />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label htmlFor="pro-benefit">Польза</Form.Label>
+                            <Form.Control
+                                id="pro-benefit"
+                                type="text"
+                                value={benefit}
+                                as="textarea"
+                                rows={4}
+                                onChange={(e) => {
+                                setBenefit(e.target.value);
+                                }}
                             />
                         </Form.Group>
                         <Form.Group className="mb-3">
