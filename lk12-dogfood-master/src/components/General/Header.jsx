@@ -1,38 +1,43 @@
+import {useContext} from "react";
 import {Link} from "react-router-dom";
 import { Logo  } from "../Logo/Logo";
 import {
     BalloonHeart, 
     Cart4, 
     PersonCircle, 
-    BuildingUp 
+    BuildingUp
 } from "react-bootstrap-icons";
+import Ctx from "../../ctx"
 
 import Search from "../Search";
 const Header = ({
-        user, 
-        upd, 
+        user,
         searchArr,
-        setGoods, 
-        setSearchResult,
+        setGoods,
         setModalOpen
     }) => {
+    const {basket} = useContext(Ctx);
     const login = () => {
         setModalOpen(true)
     }
     return <header>
         <Logo/>
-       <Search 
-            data={searchArr} 
-            setGoods={setGoods} 
-            setSearchResult={setSearchResult}
-        />
+        <div className="search-block">
+            <Search 
+                data={searchArr} 
+                setGoods={setGoods}
+            />
+        </div>
         <nav className="header__menu">
             {user && <>
-                <Link to="/">
+                <Link to="/favorites">
                     <BalloonHeart title="Избранное"/>
                 </Link>
-                <Link to="/">
+                <Link to="/basket" className="header__link">
                     <Cart4  title="Корзина"/>
+                    {basket.length > 0 && <span className="header__badge">
+                        {basket.reduce((acc, el) => acc + el.cnt, 0)}
+                    </span>}
                 </Link>
                 <Link to="/profile">
                     <PersonCircle  title="Личный кабинет"/>
@@ -42,17 +47,6 @@ const Header = ({
                 {!user && <BuildingUp  title="Войти" onClick={login}/>}
             </span>
         </nav>
-        <div className="catalog">
-            {user && (
-                <div>
-                    <h1 className="craft">Крафтовые <br /> лакомства для <br /> собак</h1>
-                    <p className="p-catalog">Всегда свежие лакомства ручной <br /> работы с доставкой по России и Миру для</p>
-                    <Link to="/catalog">
-                        <button className="btn-catalog">Каталог</button>
-                    </Link>
-                </div>
-            )}
-        </div>
     </header>
 }
 

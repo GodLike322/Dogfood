@@ -3,13 +3,22 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { Basket2, Plus, StarFill, Star, Heart, HeartFill, Truck, CheckCircle } from "react-bootstrap-icons";
 import { Container, Row, Col, Table, Card, Button, Form } from "react-bootstrap";
 import { Carousel } from 'react-bootstrap';
-
+import BsCard from "../components/BsCard";
 import Ctx from "../ctx";
 
-const Product = () => {
+const Product = ({
+  discount,
+    likes,
+    name,
+    pictures,
+    price,
+    tags,
+    _id
+ }) => {
   const [quantity, setQuantity] = useState(0);
   const { id } = useParams();
-  const { api, userId, setBaseData } = useContext(Ctx);
+  const { api, userId, setBaseData, basket, setBasket } = useContext(Ctx);
+  const inBasket = basket.filter(el => _id === el.id).length > 0;
   const [data, setData] = useState({});
   const [revText, setRevText] = useState("");
   const [revRating, setRevRating] = useState(0);
@@ -99,6 +108,17 @@ const Product = () => {
     setIsPhotoExpanded(false);
   };  
 
+  const addToBasket = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setBasket(prev => [...prev, {
+        id: _id,
+        price,
+        discount,
+        cnt: 1
+    }])
+}
+
   return (
     <Container style={{ gridTemplateColumns: "1fr" }}>
       <Row className="g-3">
@@ -176,7 +196,9 @@ const Product = () => {
                   </div>
 					        <input type="number" min="0" value={quantity} readOnly style={{fontWeight: "bold"}}/>
 					      </div>
-                <Button className="w-100" style={{ color: "black", background: "#ffe44d", maxWidth: "6cm", borderRadius: "50px", fontWeight: "bold", border: "2px solid #ffe44d" }}>
+                <Button className="w-100" style={{ color: "black", background: "#ffe44d", maxWidth: "6cm", borderRadius: "50px", fontWeight: "bold", border: "2px solid #ffe44d" }}
+                disabled={inBasket}
+                onClick={addToBasket}>
                   В корзину
                 </Button>
                 <div className="d-flex align-items-center" style={{color: "#000", color: "rgba(0, 0, 0, 0.5)", paddingTop:"15px"}}>
